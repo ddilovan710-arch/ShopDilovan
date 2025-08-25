@@ -2,96 +2,21 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>💰 نظام محاسبة المتجر</title>
-  <style>
-    body { font-family: "Cairo", sans-serif; margin:0; background:#f5f6fa; direction:rtl; font-size:20px; }
-    header { background:#2c3e50; color:white; padding:25px; text-align:center; font-size:28px; }
-    nav { display:flex; justify-content:center; gap:20px; background:#34495e; padding:15px; flex-wrap:wrap; }
-    nav button { background:#1abc9c; border:none; color:white; padding:20px 40px; border-radius:12px; cursor:pointer; font-size:22px; font-weight:bold; }
-    nav button:hover { background:#16a085; }
-    section { display:none; max-width:1000px; margin:30px auto; background:white; padding:30px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.15); font-size:22px; }
-    section.active { display:block; }
-    label { display:block; margin-top:15px; font-weight:bold; font-size:22px; }
-    input,button { margin:8px 0; padding:18px; border-radius:10px; border:1px solid #bbb; width:100%; box-sizing:border-box; font-size:22px; }
-    button.action { background:#3498db; color:white; border:none; width:100%; font-size:24px; font-weight:bold; }
-    button.action:hover { background:#2980b9; }
-    table { width:100%; border-collapse:collapse; margin-top:20px; font-size:20px; }
-    th,td { border:1px solid #ddd; padding:12px; text-align:center; }
-    th { background:#ecf0f1; font-size:22px; }
-    #scanner { display:none; margin:15px auto; width:300px; height:300px; border:3px solid #2980b9; }
-    #lastScan { text-align:center; font-size:24px; margin-top:10px; font-weight:bold; color:#2c3e50; }
-  </style>
+  <title>تجربة Firebase</title>
 </head>
 <body>
-  <header>💰 نظام محاسبة المتجر</header>
-  <nav>
-    <button onclick="showPage('sell')">💵 البيع</button>
-    <button onclick="showPage('products')">🛒 المنتجات</button>
-    <button onclick="showPage('profit')">📈 صافي الربح</button>
-    <button onclick="showPage('history')">📊 السجل</button>
-  </nav>
+  <h2>📦 إضافة منتج جديد</h2>
+  
+  <input id="name" type="text" placeholder="اسم المنتج"><br><br>
+  <input id="price" type="number" placeholder="السعر"><br><br>
+  <input id="qty" type="number" placeholder="الكمية"><br><br>
+  <button onclick="saveData()">💾 حفظ</button>
 
-  <!-- صفحة البيع -->
-  <section id="sell" class="active">
-    <h2>💵 بيع منتج</h2>
-    <label>📦 الباركود</label>
-    <input id="sellBarcode" placeholder="ادخل الباركود">
-    <button onclick="startScanner('sell')">📷 مسح باركود</button>
-    <label>🔢 الكمية</label>
-    <input id="sellQty" type="number" placeholder="الكمية" value="1">
-    <label>💲 سعر البيع</label>
-    <input id="sellPrice" type="number" placeholder="سعر البيع">
-    <button class="action" onclick="processTransaction()">✅ تنفيذ البيع</button>
-  </section>
-
-  <!-- صفحة المنتجات -->
-  <section id="products">
-    <h2>🛒 إدارة المنتجات</h2>
-    <label>💲 سعر التكلفة</label>
-    <input id="pprice" type="number" placeholder="سعر التكلفة">
-    <label>📦 الباركود</label>
-    <input id="pbarcode" placeholder="الباركود">
-    <button onclick="startScanner('product')">📷 مسح باركود</button>
-    <label>🔢 الكمية</label>
-    <input id="pstock" type="number" placeholder="الكمية">
-    <button class="action" onclick="addOrUpdateProduct()">➕ إضافة / تحديث</button>
-    <h2>📋 قائمة المنتجات</h2>
-    <table id="productsTable">
-      <thead><tr><th>الباركود</th><th>سعر التكلفة</th><th>المخزون</th><th>خيارات</th></tr></thead>
-      <tbody></tbody>
-    </table>
-    <p style="font-weight:bold;font-size:22px;">💰 إجمالي قيمة البضاعة: <span id="totalInventory">0</span></p>
-  </section>
-
-  <!-- صفحة الربح -->
-  <section id="profit">
-    <h2>📈 صافي الربح</h2>
-    <p>💵 إجمالي المبيعات: <span id="totalSales">0</span></p>
-    <p>📦 إجمالي التكلفة: <span id="totalCost">0</span></p>
-    <p>✅ صافي الربح: <span id="netProfit">0</span></p>
-  </section>
-
-  <!-- صفحة السجل -->
-  <section id="history">
-    <h2>📊 سجل العمليات</h2>
-    <table id="historyTable">
-      <thead><tr><th>النوع</th><th>الباركود</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th><th>التاريخ</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </section>
-
-  <!-- الكاميرا -->
-  <div id="scanner"></div>
-  <div id="lastScan"></div>
-  <audio id="beep" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
-
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 
   <script>
-    // 🔑 إعدادات Firebase
+    // إعدادات Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAYiNmm_zMk2-nAOKolSWOCctJFvLmzDgY",
       authDomain: "dilovan-mobail.firebaseapp.com",
@@ -103,50 +28,38 @@
       measurementId: "G-ZM7LT9ETDK"
     };
 
+    // تشغيل Firebase
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let products = [];
-    let transactions = [];
-    let scannerMode = null;
+    // دالة الحفظ
+    function saveData() {
+      let name = document.getElementById("name").value;
+      let price = document.getElementById("price").value;
+      let qty = document.getElementById("qty").value;
 
-    // 🛠️ تحميل المنتجات
-    function loadProducts() {
-      db.ref("products").on("value", snap => {
-        products = snap.val() || [];
-        renderProducts();
+      if(name === "" || price === "" || qty === ""){
+        alert("❌ يرجى ملء جميع الحقول");
+        return;
+      }
+
+      // مرجع المنتجات
+      const ref = db.ref("products").push();
+
+      ref.set({
+        name: name,
+        price: price,
+        quantity: qty,
+        time: new Date().toISOString()
+      }).then(() => {
+        alert("✅ تم حفظ المنتج بنجاح!");
+      }).catch((error) => {
+        alert("⚠️ خطأ: " + error);
       });
     }
-
-    function loadTransactions() {
-      db.ref("transactions").on("value", snap => {
-        transactions = snap.val() || [];
-        renderTransactions();
-      });
-    }
-
-    function saveProducts() { db.ref("products").set(products); }
-    function saveTransactions() { db.ref("transactions").set(transactions); }
-
-    // 📋 عرض المنتجات
-    function renderProducts() {
-      const tbody = document.querySelector("#productsTable tbody");
-      tbody.innerHTML = "";
-      let total = 0;
-      products.forEach(p => {
-        total += p.price * p.stock;
-        tbody.innerHTML += `<tr>
-          <td>${p.barcode}</td>
-          <td>${p.price}</td>
-          <td>${p.stock}</td>
-          <td><button onclick="editProduct('${p.barcode}')">✏️ تعديل</button>
-              <button onclick="deleteProduct('${p.barcode}')">🗑️ حذف</button></td>
-        </tr>`;
-      });
-      document.getElementById("totalInventory").textContent = total.toFixed(2);
-    }
-
-    // ➕ إضافة أو تحديث منتج
+  </script>
+</body>
+</html>    // ➕ إضافة أو تحديث منتج
     function addOrUpdateProduct() {
       const price = parseFloat(document.getElementById("pprice").value);
       const barcode = document.getElementById("pbarcode").value;
